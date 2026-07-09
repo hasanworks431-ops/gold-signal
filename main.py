@@ -1,55 +1,67 @@
-import os
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
-from flask import Flask
-import threading
-
-TOKEN = os.getenv("BOT_TOKEN")
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Gold Signal Bot is Running"
 
 
-async def signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = """
-📊 تحلیل صندوق طلای مفید
 
-🟡 وضعیت فعلی:
-- اونس جهانی: در حال بررسی
-- دلار آزاد: در حال بررسی
-- NAV صندوق: در حال بررسی
-- حجم خریدار: در حال بررسی
-- قدرت خریدار/فروشنده: در حال بررسی
+import asyncio
+from datetime import datetime, time
 
-📈 تحلیل تکنیکال:
-- روند بازار
-- حجم معاملات
-- قدرت خریدار
+from telegram import Bot
 
-⏳ سیگنال نهایی:
-🟡 نگهداری
-
-(اتصال داده‌های واقعی در مرحله بعد اضافه می‌شود)
-"""
-    await update.message.reply_text(message)
+from config import TELEGRAM_TOKEN, CHAT_ID
+from data_api import get_market_data
+from signal_engine import analyze_signal
 
 
-def run_flask():
-    app.run(host="0.0.0.0", port=8080)
+bot = Bot(token=TELEGRAM_TOKEN)
 
 
-def main():
-    bot = Application.builder().token(TOKEN).build()
+def is_work_time():
 
-    bot.add_handler(CommandHandler("signal", signal))
+    now = datetime.now()
 
-    threading.Thread(target=run_flask).start()
+    # شنبه تا چهارشنبه
+    if now.weekday() <= 3:
 
-    bot.run_polling()
+        start = time(11, 45)
+        end = time(17, 0)
+
+        if start <= now.time() <= end:
+            return True
+
+    return False
+
+
+async def send_signal():
+
+    data = get_market_data()
+
+    message = analyze_signal(data)
+
+    await bot.send_message(
+        chat_id=CHAT_ID,
+        text=message
+    )
+
+
+async def main():
+
+    while True:
+
+        if is_work_time():
+
+            try:
+                await send_signal()
+
+            except Exception as e:
+                print(e)
+
+            # بررسی هر ۳۰ دقیقه
+            await asyncio.sleep(1800)
+
+        else:
+
+            # خارج از ساعت کاری
+            await asyncio.sleep(300)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
