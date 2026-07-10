@@ -1,63 +1,109 @@
 import requests
-from config import GOLD_API_KEY, CURRENCY_API_KEY
 
 
-def get_gold_price():
+FUNDS = {
+    "عیار": {
+        "symbol": "عیار"
+    },
+    "طلا": {
+        "symbol": "طلا"
+    },
+    "کهربا": {
+        "symbol": "کهربا"
+    }
+}
+
+
+def get_tgju_data():
+    """
+    اطلاعات کلی طلا و دلار
+    """
     try:
-        url = "https://www.goldapi.io/api/XAU/USD"
-        headers = {
-            "x-access-token": GOLD_API_KEY,
-            "Content-Type": "application/json"
-        }
-
-        response = requests.get(url, headers=headers, timeout=10)
-        data = response.json()
-
+        # در مرحله بعد اتصال دقیق به منبع اضافه می‌شود
         return {
-            "gold": data.get("price", 0)
+            "gold": 0,
+            "dollar": 0
         }
 
     except Exception:
         return {
-            "gold": 0
-        }
-
-
-def get_currency_price():
-    try:
-        url = "https://api.exchangerate.host/latest?base=USD&symbols=IRR"
-
-        response = requests.get(url, timeout=10)
-        data = response.json()
-
-        return {
-            "dollar": data.get("rates", {}).get("IRR", 0)
-        }
-
-    except Exception:
-        return {
+            "gold": 0,
             "dollar": 0
         }
 
 
-def get_ayar_data():
-    # در مرحله بعد به API بورس ایران متصل می‌شود
-    return {
-        "price": 0,
-        "nav": 0,
-        "bubble": 0,
-        "volume": 0
-    }
+
+def get_tsetmc_data(symbol):
+    """
+    اطلاعات معاملات صندوق
+    """
+
+    try:
+        # آماده برای اتصال به داده بازار
+        return {
+            "price": 0,
+            "volume": 0,
+            "buy_power": 0,
+            "sell_power": 0,
+            "buyers": 0,
+            "sellers": 0
+        }
+
+    except Exception:
+        return {
+            "price": 0,
+            "volume": 0,
+            "buy_power": 0,
+            "sell_power": 0,
+            "buyers": 0,
+            "sellers": 0
+        }
+
+
+
+def get_fipiran_nav(symbol):
+    """
+    NAV و ارزش دارایی صندوق
+    """
+
+    try:
+        return {
+            "nav": 0,
+            "bubble": 0
+        }
+
+    except Exception:
+        return {
+            "nav": 0,
+            "bubble": 0
+        }
+
+
+
+def get_fund_data():
+
+    funds = {}
+
+    for name, info in FUNDS.items():
+
+        market = get_tsetmc_data(info["symbol"])
+        nav = get_fipiran_nav(info["symbol"])
+
+        funds[name] = {
+            **market,
+            **nav
+        }
+
+    return funds
+
 
 
 def get_market_data():
 
-    gold = get_gold_price()
-    dollar = get_currency_price()
-    ayar = get_ayar_data()
+    market = get_tgju_data()
+    funds = get_fund_data()
 
     return {
-        **gold,
-        **dollar,
-        **ayar
+        "market": market,
+        "funds": funds
     }
