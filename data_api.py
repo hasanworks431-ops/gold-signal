@@ -1,109 +1,64 @@
-import requests
-
-
-FUNDS = {
-    "عیار": {
-        "symbol": "عیار"
-    },
-    "طلا": {
-        "symbol": "طلا"
-    },
-    "کهربا": {
-        "symbol": "کهربا"
-    }
-}
+from funds_config import FUNDS
 
 
 def get_tgju_data():
-    """
-    اطلاعات کلی طلا و دلار
-    """
-    try:
-        # در مرحله بعد اتصال دقیق به منبع اضافه می‌شود
-        return {
-            "gold": 0,
-            "dollar": 0
-        }
-
-    except Exception:
-        return {
-            "gold": 0,
-            "dollar": 0
-        }
+    return {
+        "gold": 0,
+        "dollar": 0
+    }
 
 
 
-def get_tsetmc_data(symbol):
-    """
-    اطلاعات معاملات صندوق
-    """
+def get_fund_market_data(symbol):
 
-    try:
-        # آماده برای اتصال به داده بازار
-        return {
-            "price": 0,
-            "volume": 0,
-            "buy_power": 0,
-            "sell_power": 0,
-            "buyers": 0,
-            "sellers": 0
-        }
-
-    except Exception:
-        return {
-            "price": 0,
-            "volume": 0,
-            "buy_power": 0,
-            "sell_power": 0,
-            "buyers": 0,
-            "sellers": 0
-        }
+    # فعلاً آماده اتصال به داده بازار
+    return {
+        "price": 0,
+        "volume": 0,
+        "buy_power": 0,
+        "sell_power": 0,
+        "buyers": 0,
+        "sellers": 0
+    }
 
 
 
-def get_fipiran_nav(symbol):
-    """
-    NAV و ارزش دارایی صندوق
-    """
+def get_fund_nav(symbol):
 
-    try:
-        return {
-            "nav": 0,
-            "bubble": 0
-        }
-
-    except Exception:
-        return {
-            "nav": 0,
-            "bubble": 0
-        }
+    # فعلاً آماده اتصال به NAV
+    return {
+        "nav": 0,
+        "bubble": 0
+    }
 
 
 
 def get_fund_data():
 
-    funds = {}
+    result = {}
 
     for name, info in FUNDS.items():
 
-        market = get_tsetmc_data(info["symbol"])
-        nav = get_fipiran_nav(info["symbol"])
+        market = get_fund_market_data(
+            info["symbol"]
+        )
 
-        funds[name] = {
+        nav = get_fund_nav(
+            info["symbol"]
+        )
+
+        result[name] = {
             **market,
             **nav
         }
 
-    return funds
+    return result
 
 
 
 def get_market_data():
 
-    market = get_tgju_data()
-    funds = get_fund_data()
-
     return {
-        "market": market,
-        "funds": funds
+        "market": get_tgju_data(),
+        "funds": get_fund_data()
     }
