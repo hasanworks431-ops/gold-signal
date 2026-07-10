@@ -1,4 +1,3 @@
-
 from flask import Flask
 import asyncio
 
@@ -23,12 +22,7 @@ def run_signal():
 
 
 start_scheduler(run_signal)
-import asyncio
-from telegram_bot import send_message
 
-asyncio.run(
-    send_message("✅ Gold Signal Pro Bot فعال شد و اتصال تلگرام برقرار است.")
-)
 
 @app.route("/")
 def home():
