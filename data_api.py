@@ -1,7 +1,13 @@
 from funds_config import FUNDS
+from market_tsetmc import get_tsetmc_data
 
 
 def get_tgju_data():
+    """
+    اطلاعات طلا و دلار
+    فعلاً آماده اتصال به TGJU
+    """
+
     return {
         "gold": 0,
         "dollar": 0
@@ -10,22 +16,20 @@ def get_tgju_data():
 
 
 def get_fund_market_data(symbol):
+    """
+    دریافت اطلاعات معاملات صندوق از TSETMC
+    """
 
-    # فعلاً آماده اتصال به داده بازار
-    return {
-        "price": 0,
-        "volume": 0,
-        "buy_power": 0,
-        "sell_power": 0,
-        "buyers": 0,
-        "sellers": 0
-    }
+    return get_tsetmc_data(symbol)
 
 
 
 def get_fund_nav(symbol):
+    """
+    دریافت NAV و حباب صندوق
+    فعلاً آماده اتصال به FIPIRAN
+    """
 
-    # فعلاً آماده اتصال به NAV
     return {
         "nav": 0,
         "bubble": 0
@@ -35,24 +39,22 @@ def get_fund_nav(symbol):
 
 def get_fund_data():
 
-    result = {}
+    funds_data = {}
 
     for name, info in FUNDS.items():
 
-        market = get_fund_market_data(
-            info["symbol"]
-        )
+        symbol = info["symbol"]
 
-        nav = get_fund_nav(
-            info["symbol"]
-        )
+        market_data = get_fund_market_data(symbol)
 
-        result[name] = {
-            **market,
-            **nav
+        nav_data = get_fund_nav(symbol)
+
+        funds_data[name] = {
+            **market_data,
+            **nav_data
         }
 
-    return result
+    return funds_data
 
 
 
