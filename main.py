@@ -34,11 +34,19 @@ def home():
 
 
 
-if __name__ == "__main__":
+scheduler_started = False
 
-    start_scheduler(run_signal)
+def start_once():
+    global scheduler_started
 
-    app.run(
-        host="0.0.0.0",
-        port=8080
-    )
+    if not scheduler_started:
+        start_scheduler(run_signal)
+        scheduler_started = True
+
+
+start_once()
+
+
+
+
+    
