@@ -52,3 +52,8 @@ def get_tsetmc_data(symbol):
             "sell_power": 0,
             "error": str(e)
         }
+        if __name__ == "__main__":
+
+    for symbol in ["عیار", "طلا", "کهربا"]:
+        data = get_tsetmc_data(symbol)
+        print(symbol, data)
