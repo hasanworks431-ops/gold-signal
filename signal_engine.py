@@ -1,17 +1,37 @@
 
+from indicators import analyze_trend
+
+
 def analyze_fund(name, data):
 
     score = 0
     reasons = []
 
-    price = data.get("price", 0)
-    volume = data.get("volume", 0)
+    prices = data.get("prices", [])
 
+    volume = data.get("volume", 0)
     buy_power = data.get("buy_power", 0)
     sell_power = data.get("sell_power", 0)
-
-    nav = data.get("nav", 0)
     bubble = data.get("bubble", 0)
+
+
+    # تحلیل روند
+    if prices:
+
+        trend = analyze_trend(prices)
+
+        if trend["short_trend"] == "صعودی":
+            score += 1
+            reasons.append("روند کوتاه مدت EMA20 مثبت است")
+
+        if trend["medium_trend"] == "صعودی":
+            score += 1
+            reasons.append("روند میان مدت MA50 مثبت است")
+
+        if trend["main_trend"] == "صعودی":
+            score += 2
+            reasons.append("روند اصلی مثبت است")
+
 
 
     # حجم معاملات
@@ -20,38 +40,42 @@ def analyze_fund(name, data):
         reasons.append("حجم معاملات فعال است")
 
 
-    # قدرت خریدار
+
+    # قدرت خریدار و فروشنده
     if buy_power > sell_power:
-        score += 1
-        reasons.append("قدرت خریدار بیشتر از فروشنده است")
+        score += 2
+        reasons.append("قدرت خریدار بیشتر است")
 
     elif sell_power > buy_power:
         score -= 1
         reasons.append("فشار فروش بیشتر است")
 
 
-    # بررسی NAV و حباب
-    if nav > 0:
 
-        if bubble < 3:
+    # حباب
+    if bubble > 0:
+
+        if bubble < 5:
             score += 1
-            reasons.append("حباب مناسب است")
+            reasons.append("حباب در محدوده مناسب است")
 
         elif bubble > 10:
             score -= 1
             reasons.append("حباب بالا است")
 
 
+
     # نتیجه نهایی
 
-    if score >= 3:
+    if score >= 6:
         signal = "🟢 خرید"
 
-    elif score <= -1:
+    elif score <= 2:
         signal = "🔴 فروش"
 
     else:
         signal = "🟡 دست نگهدار"
+
 
 
     message = f"""
@@ -63,6 +87,7 @@ def analyze_fund(name, data):
 
 دلایل:
 """
+
 
     for r in reasons:
         message += f"\n✅ {r}"
@@ -78,10 +103,10 @@ def analyze_all_funds(data):
 
     funds = data.get("funds", {})
 
-    for name, fund_data in funds.items():
+    for name, fund in funds.items():
 
         result.append(
-            analyze_fund(name, fund_data)
+            analyze_fund(name, fund)
         )
 
 
