@@ -4,6 +4,10 @@ from signal_engine import analyze_all_funds
 from telegram_bot import send_message
 from scheduler import start_scheduler
 import asyncio
+from market_tsetmc import get_tsetmc_data
+print(get_tsetmc_data("عیار"))
+print(get_tsetmc_data("طلا"))
+print(get_tsetmc_data("کهربا"))
 
 
 app = Flask(__name__)
