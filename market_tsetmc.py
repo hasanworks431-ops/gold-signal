@@ -1,29 +1,54 @@
 import requests
+import re
 
 
 def get_tsetmc_data(symbol):
 
     try:
-        # این بخش بعد از تعیین شناسه دقیق نماد تکمیل می‌شود
-        return {
-            "symbol": symbol,
-            "price": 0,
-            "volume": 0,
-            "value": 0,
-            "buyers": 0,
-            "sellers": 0,
-            "buy_power": 0,
-            "sell_power": 0
+        url = f"https://www.tsetmc.com/Loader.aspx?ParTree=151311&i={symbol}"
+
+        headers = {
+            "User-Agent": "Mozilla/5.0"
         }
 
-    except Exception:
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=10
+        )
+
+        text = response.text
+
+
+        # فعلاً استخراج اولیه
+        numbers = re.findall(r'\d+', text)
+
+
         return {
             "symbol": symbol,
             "price": 0,
+            "close_price": 0,
             "volume": 0,
             "value": 0,
             "buyers": 0,
             "sellers": 0,
             "buy_power": 0,
-            "sell_power": 0
+            "sell_power": 0,
+            "raw": numbers[:10]
+        }
+
+
+    except Exception as e:
+
+        return {
+            "symbol": symbol,
+            "price": 0,
+            "close_price": 0,
+            "volume": 0,
+            "value": 0,
+            "buyers": 0,
+            "sellers": 0,
+            "buy_power": 0,
+            "sell_power": 0,
+            "error": str(e)
         }
