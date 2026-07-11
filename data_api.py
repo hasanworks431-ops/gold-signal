@@ -1,3 +1,7 @@
+
+from price_history import update_price, get_price_history
+
+
 from funds_config import FUNDS
 from market_tsetmc import get_tsetmc_data
 
