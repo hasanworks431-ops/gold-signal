@@ -1,4 +1,3 @@
-
 from indicators import analyze_trend
 
 
@@ -20,77 +19,127 @@ def analyze_fund(name, data):
 
         trend = analyze_trend(prices)
 
-        if trend["short_trend"] == "صعودی":
-            score += 1
-            reasons.append("روند کوتاه مدت EMA20 مثبت است")
+        if trend.get("short_trend") == "صعودی":
 
-        if trend["medium_trend"] == "صعودی":
             score += 1
-            reasons.append("روند میان مدت MA50 مثبت است")
+            reasons.append(
+                "روند کوتاه مدت مثبت است"
+            )
 
-        if trend["main_trend"] == "صعودی":
+
+        if trend.get("medium_trend") == "صعودی":
+
+            score += 1
+            reasons.append(
+                "روند میان مدت مثبت است"
+            )
+
+
+        if trend.get("main_trend") == "صعودی":
+
             score += 2
-            reasons.append("روند اصلی مثبت است")
+            reasons.append(
+                "روند اصلی مثبت است"
+            )
 
 
 
     # حجم معاملات
+
     if volume > 0:
+
         score += 1
-        reasons.append("حجم معاملات فعال است")
+
+        reasons.append(
+            "حجم معاملات فعال است"
+        )
 
 
 
     # قدرت خریدار و فروشنده
+
     if buy_power > sell_power:
+
         score += 2
-        reasons.append("قدرت خریدار بیشتر است")
+
+        reasons.append(
+            "قدرت خریدار بیشتر است"
+        )
+
 
     elif sell_power > buy_power:
+
         score -= 1
-        reasons.append("فشار فروش بیشتر است")
+
+        reasons.append(
+            "فشار فروش بیشتر است"
+        )
 
 
 
-    # حباب
+    # حباب صندوق
+
     if bubble > 0:
 
+
         if bubble < 5:
+
             score += 1
-            reasons.append("حباب در محدوده مناسب است")
+
+            reasons.append(
+                "حباب مناسب است"
+            )
+
 
         elif bubble > 10:
+
             score -= 1
-            reasons.append("حباب بالا است")
+
+            reasons.append(
+                "حباب بالا است"
+            )
 
 
 
-    # نتیجه نهایی
+    # تصمیم نهایی
 
     if score >= 6:
+
         signal = "🟢 خرید"
 
+
     elif score <= 2:
+
         signal = "🔴 فروش"
 
+
     else:
-        signal = "🟡 دست نگهدار"
+
+        signal = "🟡 نگهداری"
 
 
 
     message = f"""
 📊 صندوق: {name}
 
-سیگنال: {signal}
+وضعیت: {signal}
 
-امتیاز: {score}
+امتیاز: {score}/10
 
 دلایل:
 """
 
 
-    for r in reasons:
-        message += f"\n✅ {r}"
+    if reasons:
+
+        for reason in reasons:
+
+            message += f"\n✅ {reason}"
+
+    else:
+
+        message += "\n⚪ داده کافی برای تحلیل وجود ندارد"
+
 
 
     return message
@@ -103,10 +152,20 @@ def analyze_all_funds(data):
 
     funds = data.get("funds", {})
 
+
     for name, fund in funds.items():
 
+        market_data = fund.get(
+            "market",
+            {}
+        )
+
+
         result.append(
-            analyze_fund(name, fund)
+            analyze_fund(
+                name,
+                market_data
+            )
         )
 
 
