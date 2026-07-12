@@ -1,6 +1,6 @@
 from funds_config import FUNDS
-from market_tsetmc import 
-get_market_data
+from market_tsetmc import get_market_data
+
 
 def get_tgju_data():
     return {
@@ -9,21 +9,14 @@ def get_tgju_data():
     }
 
 
-
 def get_fund_nav(symbol):
-    """
-    دریافت NAV و حباب صندوق
-    بعداً به فیپیران متصل می‌شود
-    """
-
     return {
         "nav": 0,
         "bubble": 0
     }
 
 
-
-def get_fund_data():
+def get_market_all_data():
 
     funds_data = {}
 
@@ -31,32 +24,21 @@ def get_fund_data():
 
         symbol = info["symbol"]
 
-        market = get_tsetmc_data(symbol)
+        market = get_market_data(symbol)
 
         nav = get_fund_nav(symbol)
 
         funds_data[name] = {
-            **market,
-            **nav
+            "symbol": symbol,
+            "market": market,
+            "nav": nav
         }
 
     return funds_data
 
 
+# سازگار با main.py فعلی
+def get_market_data_all():
 
-def get_market_data():
-
-    return {
-        "market": get_tgju_data(),
-        "funds": get_fund_data()
-    }
-def get_fund_data(symbol):
-
-    data = get_market_data(symbol)
-
-    return {
-        "symbol": symbol,
-        "price": data.get("price"),
-        "volume": data.get("volume"),
-        "status": data.get("status")
-    }
+    return get_market_all_data()
+        
