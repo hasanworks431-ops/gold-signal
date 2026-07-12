@@ -4,6 +4,7 @@ from signal_engine import analyze_all_funds
 from telegram_bot import send_message
 from scheduler import start_scheduler
 import asyncio
+import os
 
 
 app = Flask(__name__)
@@ -11,7 +12,10 @@ app = Flask(__name__)
 
 def run_signal():
 
-    print("RUN_SIGNAL STARTED", flush=True)
+    print(
+        "RUN_SIGNAL STARTED",
+        flush=True
+    )
 
     try:
 
@@ -60,10 +64,19 @@ def start_once():
         return
 
 
-    start_scheduler(run_signal)
+    start_scheduler(
+        run_signal
+    )
 
     scheduler_started = True
 
 
 
-start_once()
+# جلوگیری از اجرای چند Scheduler در محیط Deploy
+
+if os.environ.get(
+    "START_SCHEDULER",
+    "false"
+).lower() == "true":
+
+    start_once()
