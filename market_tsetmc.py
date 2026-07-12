@@ -1,5 +1,5 @@
 
-import requests
+  import requests
 
 
 TSETMC_SEARCH_URL = "https://old.tsetmc.com/tsev2/data/search.aspx"
@@ -30,24 +30,22 @@ def search_symbol(symbol):
 
 def get_market_data(symbol):
 
-    result = search_symbol(symbol)
+    raw = search_symbol(symbol)
 
-    if result:
+    if not raw:
         return {
             "symbol": symbol,
-            "status": "found",
-            "raw": result[:200]
+            "status": "not_found",
+            "last_price": None,
+            "close_price": None,
+            "volume": None
         }
 
     return {
         "symbol": symbol,
-        "status": "not_found",
-        "raw": None
-    }
-
-
-
-if __name__ == "__main__":
-
-    for symbol in ["عیار", "طلا", "کهربا"]:
-        print(get_market_data(symbol))
+        "status": "found",
+        "last_price": None,
+        "close_price": None,
+        "volume": None,
+        "raw": raw[:200]
+    }      
