@@ -1,27 +1,36 @@
 from indicators import analyze_trend
 
+from liquidity_engine import calculate_liquidity
+from valuation_engine import calculate_valuation
+from risk_engine import calculate_risk_reward
+
+
 
 def analyze_fund(name, data):
 
     score = 0
     reasons = []
 
-    prices = data.get("prices", [])
 
-    volume = data.get("volume", 0)
-    buy_power = data.get("buy_power", 0)
-    sell_power = data.get("sell_power", 0)
-    bubble = data.get("bubble", 0)
+    # -----------------
+    # تحلیل تکنیکال
+    # -----------------
+
+    prices = data.get(
+        "prices",
+        []
+    )
 
 
-    # تحلیل روند
     if prices:
 
         trend = analyze_trend(prices)
 
+
         if trend.get("short_trend") == "صعودی":
 
             score += 1
+
             reasons.append(
                 "روند کوتاه مدت مثبت است"
             )
@@ -30,6 +39,7 @@ def analyze_fund(name, data):
         if trend.get("medium_trend") == "صعودی":
 
             score += 1
+
             reasons.append(
                 "روند میان مدت مثبت است"
             )
@@ -38,77 +48,98 @@ def analyze_fund(name, data):
         if trend.get("main_trend") == "صعودی":
 
             score += 2
+
             reasons.append(
                 "روند اصلی مثبت است"
             )
 
 
 
-    # حجم معاملات
+    # -----------------
+    # نقدشوندگی
+    # -----------------
 
-    if volume > 0:
+    liquidity = calculate_liquidity(data)
 
-        score += 1
 
-        reasons.append(
-            "حجم معاملات فعال است"
+    liquidity_score = liquidity.get(
+        "liquidity_score",
+        0
+    )
+
+
+    if liquidity_score >= 60:
+
+        score += 2
+
+        reasons.extend(
+            liquidity.get(
+                "liquidity_reasons",
+                []
+            )
         )
 
 
 
-    # قدرت خریدار و فروشنده
+    # -----------------
+    # ارزش صندوق
+    # -----------------
 
-    if buy_power > sell_power:
+    valuation = calculate_valuation(data)
+
+
+    valuation_score = valuation.get(
+        "valuation_score",
+        0
+    )
+
+
+    if valuation_score >= 70:
+
+        score += 2
+
+        reasons.extend(
+            valuation.get(
+                "valuation_reasons",
+                []
+            )
+        )
+
+
+
+    # -----------------
+    # ریسک به ریوارد
+    # -----------------
+
+    risk = calculate_risk_reward(data)
+
+
+    risk_reward = risk.get(
+        "risk_reward",
+        0
+    )
+
+
+    if risk_reward >= 2:
 
         score += 2
 
         reasons.append(
-            "قدرت خریدار بیشتر است"
-        )
-
-
-    elif sell_power > buy_power:
-
-        score -= 1
-
-        reasons.append(
-            "فشار فروش بیشتر است"
+            "نسبت سود به ضرر مناسب است"
         )
 
 
 
-    # حباب صندوق
-
-    if bubble > 0:
-
-
-        if bubble < 5:
-
-            score += 1
-
-            reasons.append(
-                "حباب مناسب است"
-            )
-
-
-        elif bubble > 10:
-
-            score -= 1
-
-            reasons.append(
-                "حباب بالا است"
-            )
-
-
-
+    # -----------------
     # تصمیم نهایی
+    # -----------------
 
-    if score >= 6:
+    if score >= 7:
 
         signal = "🟢 خرید"
 
 
-    elif score <= 2:
+    elif score <= 3:
 
         signal = "🔴 فروش"
 
@@ -126,19 +157,31 @@ def analyze_fund(name, data):
 
 امتیاز: {score}/10
 
-دلایل:
+نقدشوندگی: {liquidity_score}/100
+
+ارزش صندوق: {valuation_score}/100
+
+ریسک/بازده: {risk_reward}
+
 """
 
 
-    if reasons:
+    if risk.get("entry",0):
 
-        for reason in reasons:
+        message += f"""
+ورود: {risk.get('entry')}
+حد ضرر: {risk.get('stop_loss')}
+هدف: {risk.get('target')}
+"""
 
-            message += f"\n✅ {reason}"
 
-    else:
 
-        message += "\n⚪ داده کافی برای تحلیل وجود ندارد"
+    message += "\nدلایل:"
+
+
+    for reason in reasons:
+
+        message += f"\n✅ {reason}"
 
 
 
@@ -146,25 +189,28 @@ def analyze_fund(name, data):
 
 
 
+
 def analyze_all_funds(data):
 
     result = []
 
-    funds = data.get("funds", {})
+
+    funds = data.get(
+        "funds",
+        {}
+    )
 
 
     for name, fund in funds.items():
-
-        market_data = fund.get(
-            "market",
-            {}
-        )
 
 
         result.append(
             analyze_fund(
                 name,
-                market_data
+                fund.get(
+                    "market",
+                    {}
+                )
             )
         )
 
