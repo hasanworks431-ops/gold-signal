@@ -18,5 +18,10 @@ def start_scheduler(job):
         replace_existing=True
     )
 
+    print("Scheduler job added")
+
     if not scheduler.running:
+
         scheduler.start()
+
+        print("Scheduler started")
