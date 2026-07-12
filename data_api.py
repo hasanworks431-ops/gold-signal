@@ -40,6 +40,4 @@ def get_market_all_data():
 
 
 def get_market_data():
-
     return get_market_all_data()
-        
