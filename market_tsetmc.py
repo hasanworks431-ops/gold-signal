@@ -1,32 +1,49 @@
 import requests
+import time
 
 
 TSETMC_SEARCH_URL = "https://old.tsetmc.com/tsev2/data/search.aspx"
 
 
-def search_symbol(symbol):
+def search_symbol(symbol, retries=3):
 
-    try:
+    for attempt in range(retries):
 
-        params = {
-            "name": symbol
-        }
+        try:
 
-        response = requests.get(
-            TSETMC_SEARCH_URL,
-            params=params,
-            timeout=10
-        )
+            params = {
+                "name": symbol
+            }
 
-        if response.status_code == 200:
-            return response.text
+            response = requests.get(
+                TSETMC_SEARCH_URL,
+                params=params,
+                timeout=20
+            )
 
-        return None
+            if response.status_code == 200:
 
-    except Exception as e:
+                return response.text
 
-        print("TSETMC search error:", e)
-        return None
+
+        except requests.exceptions.Timeout:
+
+            print(
+                f"TSETMC timeout for {symbol} - attempt {attempt + 1}"
+            )
+
+
+        except requests.exceptions.RequestException as e:
+
+            print(
+                f"TSETMC connection error for {symbol}: {e}"
+            )
+
+
+        time.sleep(2)
+
+
+    return None
 
 
 
@@ -34,11 +51,12 @@ def get_market_data(symbol):
 
     raw = search_symbol(symbol)
 
+
     if not raw:
 
         return {
             "symbol": symbol,
-            "status": "not_found",
+            "status": "unavailable",
             "last_price": None,
             "close_price": None,
             "volume": None
