@@ -1,59 +1,53 @@
+
 import requests
-import re
 
 
-def get_tsetmc_data(symbol):
+TSETMC_SEARCH_URL = "https://old.tsetmc.com/tsev2/data/search.aspx"
 
+
+def search_symbol(symbol):
     try:
-        url = f"https://www.tsetmc.com/Loader.aspx?ParTree=151311&i={symbol}"
-
-        headers = {
-            "User-Agent": "Mozilla/5.0"
+        params = {
+            "name": symbol
         }
 
         response = requests.get(
-            url,
-            headers=headers,
+            TSETMC_SEARCH_URL,
+            params=params,
             timeout=10
         )
 
-        text = response.text
+        if response.status_code == 200:
+            return response.text
 
-
-        # فعلاً استخراج اولیه
-        numbers = re.findall(r'\d+', text)
-
-
-        return {
-            "symbol": symbol,
-            "price": 0,
-            "close_price": 0,
-            "volume": 0,
-            "value": 0,
-            "buyers": 0,
-            "sellers": 0,
-            "buy_power": 0,
-            "sell_power": 0,
-            "raw": numbers[:10]
-        }
-
+        return None
 
     except Exception as e:
+        print("TSETMC search error:", e)
+        return None
 
+
+
+def get_market_data(symbol):
+
+    result = search_symbol(symbol)
+
+    if result:
         return {
             "symbol": symbol,
-            "price": 0,
-            "close_price": 0,
-            "volume": 0,
-            "value": 0,
-            "buyers": 0,
-            "sellers": 0,
-            "buy_power": 0,
-            "sell_power": 0,
-            "error": str(e)
+            "status": "found",
+            "raw": result[:200]
         }
-        if __name__ == "__main__":
+
+    return {
+        "symbol": symbol,
+        "status": "not_found",
+        "raw": None
+    }
+
+
+
+if __name__ == "__main__":
 
     for symbol in ["عیار", "طلا", "کهربا"]:
-        data = get_tsetmc_data(symbol)
-        print(symbol, data)
+        print(get_market_data(symbol))
