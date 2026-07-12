@@ -9,7 +9,13 @@ def safe_get(provider, *args):
 
     try:
 
-        return provider(*args)
+        result = provider(*args)
+
+        if result is None:
+            return {}
+
+        return result
+
 
     except Exception as e:
 
@@ -24,8 +30,11 @@ def safe_get(provider, *args):
 
 def get_market_snapshot(symbol):
 
+    print(
+        f"START DATA FOR {symbol}",
+        flush=True
+    )
 
-    # دریافت همزمان منابع (فعلاً مرحله اول)
 
     tsetmc = safe_get(
         get_tsetmc,
@@ -50,15 +59,19 @@ def get_market_snapshot(symbol):
     )
 
 
+    print(
+        f"DATA READY FOR {symbol}",
+        flush=True
+    )
+
+
 
     snapshot = {
 
         "symbol": symbol,
 
 
-        # ----------------
-        # بازار
-        # ----------------
+        # بازار TSETMC
 
         "price": tsetmc.get(
             "price",
@@ -69,7 +82,6 @@ def get_market_snapshot(symbol):
             "close",
             0
         ),
-
 
         "volume": tsetmc.get(
             "volume",
@@ -105,9 +117,7 @@ def get_market_snapshot(symbol):
 
 
 
-        # ----------------
-        # ارزش صندوق
-        # ----------------
+        # فیپ ایران
 
         "nav": fipiran.get(
             "nav",
@@ -126,9 +136,7 @@ def get_market_snapshot(symbol):
 
 
 
-        # ----------------
-        # بازار جهانی
-        # ----------------
+        # TGJU
 
         "gold": tgju.get(
             "gold",
@@ -142,9 +150,7 @@ def get_market_snapshot(symbol):
 
 
 
-        # ----------------
-        # تکنیکال
-        # ----------------
+        # رهاورد
 
         "ema20": rahavard.get(
             "ema20",
@@ -173,9 +179,7 @@ def get_market_snapshot(symbol):
 
 
 
-        # ----------------
         # وضعیت منابع
-        # ----------------
 
         "sources": {
 
@@ -204,8 +208,14 @@ def get_market_snapshot(symbol):
 
         "status": "ok"
 
-
     }
+
+
+
+    print(
+        f"SNAPSHOT DONE {symbol}",
+        flush=True
+    )
 
 
     return snapshot
