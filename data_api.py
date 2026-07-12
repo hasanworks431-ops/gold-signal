@@ -1,19 +1,5 @@
 from funds_config import FUNDS
-from market_tsetmc import get_market_data as tsetmc_market_data
-
-
-def get_tgju_data():
-    return {
-        "gold": 0,
-        "dollar": 0
-    }
-
-
-def get_fund_nav(symbol):
-    return {
-        "nav": 0,
-        "bubble": 0
-    }
+from market_provider import get_market_snapshot
 
 
 def get_market_all_data():
@@ -24,20 +10,26 @@ def get_market_all_data():
 
         symbol = info["symbol"]
 
-        market = tsetmc_market_data(symbol)
+        market = get_market_snapshot(symbol)
 
-        nav = get_fund_nav(symbol)
 
         funds_data[name] = {
+
             "symbol": symbol,
-            "market": market,
-            "nav": nav
+
+            "market": market
+
         }
 
+
     return {
+
         "funds": funds_data
+
     }
 
 
+
 def get_market_data():
+
     return get_market_all_data()
