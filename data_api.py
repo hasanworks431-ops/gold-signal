@@ -38,7 +38,6 @@ def get_market_all_data():
 
 
 # سازگار با main.py فعلی
-def get_market_data_all():
-
+def get_market_data():
     return get_market_all_data()
         
