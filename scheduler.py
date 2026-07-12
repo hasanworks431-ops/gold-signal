@@ -1,5 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
+
 scheduler = BackgroundScheduler(timezone="Asia/Tehran")
 
 
@@ -11,12 +12,11 @@ def start_scheduler(job):
         job,
         trigger="cron",
         day_of_week="sat,sun,mon,tue,wed",
-        hour="11-17",
-        minute="*/15",
+        hour="*",
+        minute="*/5",
         id="signal_job",
         replace_existing=True
     )
 
     if not scheduler.running:
         scheduler.start()
-        
