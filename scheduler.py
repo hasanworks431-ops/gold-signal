@@ -1,4 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+import sys
 
 
 scheduler = BackgroundScheduler(timezone="Asia/Tehran")
@@ -18,10 +19,10 @@ def start_scheduler(job):
         replace_existing=True
     )
 
-    print("Scheduler job added")
+    print("Scheduler job added", flush=True)
 
     if not scheduler.running:
 
         scheduler.start()
 
-        print("Scheduler started")
+        print("Scheduler started", flush=True)
