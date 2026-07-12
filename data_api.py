@@ -24,7 +24,7 @@ def get_market_all_data():
 
         symbol = info["symbol"]
 
-        market = get_market_data(symbol)
+        market = tsetmc_market_data(symbol)
 
         nav = get_fund_nav(symbol)
 
