@@ -11,7 +11,10 @@ app = Flask(__name__)
 
 def run_signal():
 
+    print("RUN_SIGNAL STARTED")
+
     try:
+
         data = get_market_data()
 
         message = analyze_all_funds(data)
@@ -22,7 +25,9 @@ def run_signal():
 
         print("Signal sent successfully")
 
+
     except Exception as e:
+
         print("Signal error:", e)
 
 
@@ -36,12 +41,17 @@ def home():
 
 scheduler_started = False
 
+
 def start_once():
+
     global scheduler_started
 
     if not scheduler_started:
+
         start_scheduler(run_signal)
+
         scheduler_started = True
+
 
 
 start_once()
