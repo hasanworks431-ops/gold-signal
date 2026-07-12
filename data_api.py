@@ -1,6 +1,5 @@
 from funds_config import FUNDS
-from market_tsetmc import
-get_market_data as tsetmc_market_data
+from market_tsetmc import get_market_data as tsetmc_market_data
 
 
 def get_tgju_data():
@@ -35,10 +34,13 @@ def get_market_all_data():
             "nav": nav
         }
 
-    return funds_data
+    return {
+        "funds": funds_data
+    }
 
 
-# سازگار با main.py فعلی
+# هماهنگ با main.py
 def get_market_data():
+
     return get_market_all_data()
         
