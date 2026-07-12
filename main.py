@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 def run_signal():
 
-    print("RUN_SIGNAL STARTED")
+    print("RUN_SIGNAL STARTED", flush=True)
 
     try:
 
@@ -23,12 +23,19 @@ def run_signal():
             send_message(message)
         )
 
-        print("Signal sent successfully")
+        print(
+            "Signal sent successfully",
+            flush=True
+        )
 
 
     except Exception as e:
 
-        print("Signal error:", e)
+        print(
+            "Signal error:",
+            e,
+            flush=True
+        )
 
 
 
@@ -42,21 +49,21 @@ def home():
 scheduler_started = False
 
 
+
 def start_once():
 
     global scheduler_started
 
-    if not scheduler_started:
 
-        start_scheduler(run_signal)
+    if scheduler_started:
 
-        scheduler_started = True
+        return
+
+
+    start_scheduler(run_signal)
+
+    scheduler_started = True
 
 
 
 start_once()
-
-
-
-
-    
