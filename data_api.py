@@ -39,7 +39,6 @@ def get_market_all_data():
     }
 
 
-# هماهنگ با main.py
 def get_market_data():
 
     return get_market_all_data()
