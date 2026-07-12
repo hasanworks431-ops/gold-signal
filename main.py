@@ -4,7 +4,6 @@ from signal_engine import analyze_all_funds
 from telegram_bot import send_message
 from scheduler import start_scheduler
 import asyncio
-import os
 
 
 app = Flask(__name__)
@@ -12,10 +11,7 @@ app = Flask(__name__)
 
 def run_signal():
 
-    print(
-        "RUN_SIGNAL STARTED",
-        flush=True
-    )
+    print("RUN_SIGNAL STARTED", flush=True)
 
     try:
 
@@ -32,15 +28,12 @@ def run_signal():
             flush=True
         )
 
-
     except Exception as e:
 
         print(
-            "Signal error:",
-            e,
+            f"Signal error: {e}",
             flush=True
         )
-
 
 
 @app.route("/")
@@ -49,34 +42,20 @@ def home():
     return "Gold Signal Pro Bot is Running!"
 
 
-
 scheduler_started = False
-
 
 
 def start_once():
 
     global scheduler_started
 
-
     if scheduler_started:
-
         return
 
-
-    start_scheduler(
-        run_signal
-    )
+    start_scheduler(run_signal)
 
     scheduler_started = True
 
 
-
-# جلوگیری از اجرای چند Scheduler در محیط Deploy
-
-if os.environ.get(
-    "START_SCHEDULER",
-    "false"
-).lower() == "true":
-
-    start_once()
+# شروع Scheduler
+start_once()
