@@ -49,3 +49,4 @@ def get_market_data(symbol):
         "volume": None,
         "raw": raw[:200]
     }      
+print(get_market_data("عیار"))
