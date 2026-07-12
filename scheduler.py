@@ -1,5 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from data_api import get_fund_data
 
 scheduler = BackgroundScheduler(timezone="Asia/Tehran")
 
