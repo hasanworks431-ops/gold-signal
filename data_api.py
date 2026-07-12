@@ -51,3 +51,8 @@ def get_market_data():
         "market": get_tgju_data(),
         "funds": get_fund_data()
     }
+def test_tsetmc():
+
+    for symbol in ["عیار", "طلا", "کهربا"]:
+        data = get_market_data(symbol)
+        print(data)
