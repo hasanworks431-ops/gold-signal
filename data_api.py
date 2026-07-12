@@ -1,6 +1,7 @@
 from funds_config import FUNDS
 from market_tsetmc import get_tsetmc_data
-
+from market_tsetmc import 
+get_market_data
 
 def get_tgju_data():
     return {
