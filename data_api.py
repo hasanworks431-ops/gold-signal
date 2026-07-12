@@ -51,8 +51,13 @@ def get_market_data():
         "market": get_tgju_data(),
         "funds": get_fund_data()
     }
-def test_tsetmc():
+def get_fund_data(symbol):
 
-    for symbol in ["عیار", "طلا", "کهربا"]:
-        data = get_market_data(symbol)
-        print(data)
+    data = get_market_data(symbol)
+
+    return {
+        "symbol": symbol,
+        "price": data.get("price"),
+        "volume": data.get("volume"),
+        "status": data.get("status")
+    }
