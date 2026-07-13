@@ -23,16 +23,45 @@ class TsetmcProvider(BaseProvider):
 
             return response.text
 
-
         except Exception as e:
 
             print(
-                f"TSETMC error for {symbol}: {e}",
+                f"TSETMC search error for {symbol}: {e}",
                 flush=True
             )
 
             return None
 
+
+    def parse_search_result(self, raw, symbol):
+
+        """
+        فعلاً فقط اسکلت Parser.
+        استخراج کامل در مرحله بعد با فرمت واقعی TSETMC انجام می‌شود.
+        """
+
+        return {
+
+            "symbol": symbol,
+
+            "status": "found",
+
+            "price": 0,
+            "close": 0,
+
+            "volume": 0,
+            "value": 0,
+
+            "trade_count": 0,
+
+            "buy_power": 0,
+            "sell_power": 0,
+
+            "prices": [],
+
+            "raw": raw[:200]
+
+        }
 
 
     def get_market_data(self, symbol):
@@ -64,30 +93,10 @@ class TsetmcProvider(BaseProvider):
             }
 
 
-        # فعلاً استخراج دیتا بعداً تکمیل می‌شود
-
-        return {
-
-            "symbol": symbol,
-
-            "status": "found",
-
-            "price": 0,
-            "close": 0,
-
-            "volume": 0,
-            "value": 0,
-
-            "trade_count": 0,
-
-            "buy_power": 0,
-            "sell_power": 0,
-
-            "prices": [],
-
-            "raw": raw[:100]
-
-        }
+        return self.parse_search_result(
+            raw,
+            symbol
+        )
 
 
 
