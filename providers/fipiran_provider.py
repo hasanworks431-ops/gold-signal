@@ -9,33 +9,41 @@ class FipiranProvider(BaseProvider):
     def __init__(self):
         super().__init__()
 
+
     def get_fund_data(self, symbol):
 
         try:
 
-            response = self.get(FIPIRAN_URL)
+            response = self.get(
+                FIPIRAN_URL
+            )
 
             html = response.text
 
-            # مرحله بعد اینجا NAV و Bubble استخراج می‌شود
+
+            # TODO:
+            # استخراج واقعی NAV / AUM / Bubble
+            # پس از مشخص شدن API یا ساختار صفحه FIPIRAN
+
 
             return {
 
                 "symbol": symbol,
 
-                "nav": 0,
+                "nav": None,
 
-                "bubble": 0,
+                "bubble": None,
 
-                "aum": 0,
+                "aum": None,
 
                 "source": "fipiran",
 
-                "status": "ok",
+                "status": "partial",
 
-                "html": html[:200]
+                "raw": html[:200]
 
             }
+
 
         except Exception as e:
 
@@ -44,21 +52,23 @@ class FipiranProvider(BaseProvider):
                 flush=True
             )
 
+
             return {
 
                 "symbol": symbol,
 
-                "nav": 0,
+                "nav": None,
 
-                "bubble": 0,
+                "bubble": None,
 
-                "aum": 0,
+                "aum": None,
 
                 "source": "fipiran",
 
                 "status": "error"
 
             }
+
 
 
 def get_fipiran(symbol):
