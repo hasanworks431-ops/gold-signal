@@ -23,7 +23,6 @@ def start_scheduler(job):
 
     if not existing_jobs:
 
-        # شروع بازار
         scheduler.add_job(
             job,
             trigger="cron",
@@ -35,7 +34,6 @@ def start_scheduler(job):
         )
 
 
-        # اجرای هر ۵ دقیقه در ساعات بازار
         scheduler.add_job(
             job,
             trigger="cron",
@@ -47,7 +45,6 @@ def start_scheduler(job):
         )
 
 
-        # آخرین اجرای ساعت 17:00
         scheduler.add_job(
             job,
             trigger="cron",
@@ -60,4 +57,15 @@ def start_scheduler(job):
 
 
         print(
-            "Scheduler
+            "Scheduler jobs added",
+            flush=True
+        )
+
+
+    scheduler.start()
+
+
+    print(
+        "Scheduler started",
+        flush=True
+    )
