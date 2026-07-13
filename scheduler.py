@@ -1,6 +1,12 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
+print(
+    "NEW SCHEDULER VERSION LOADED",
+    flush=True
+)
+
+
 scheduler = BackgroundScheduler(
     timezone="Asia/Tehran"
 )
