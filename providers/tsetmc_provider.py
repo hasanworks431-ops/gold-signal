@@ -1,47 +1,83 @@
-from market_tsetmc import get_market_data
+from providers.base_provider import BaseProvider
 
 
-def get_tsetmc(symbol):
+TSETMC_SEARCH_URL = "https://old.tsetmc.com/tsev2/data/search.aspx"
 
-    try:
 
-        data = get_market_data(symbol)
+class TsetmcProvider(BaseProvider):
+
+    def __init__(self):
+        super().__init__()
+
+
+    def search_symbol(self, symbol):
+
+        try:
+
+            response = self.get(
+                TSETMC_SEARCH_URL,
+                params={
+                    "name": symbol
+                }
+            )
+
+            return response.text
+
+
+        except Exception as e:
+
+            print(
+                f"TSETMC error for {symbol}: {e}",
+                flush=True
+            )
+
+            return None
+
+
+
+    def get_market_data(self, symbol):
+
+        raw = self.search_symbol(symbol)
+
+
+        if not raw:
+
+            return {
+
+                "symbol": symbol,
+
+                "status": "unavailable",
+
+                "price": 0,
+                "close": 0,
+
+                "volume": 0,
+                "value": 0,
+
+                "trade_count": 0,
+
+                "buy_power": 0,
+                "sell_power": 0,
+
+                "prices": []
+
+            }
+
+
+        # فعلاً استخراج دیتا بعداً تکمیل می‌شود
 
         return {
+
             "symbol": symbol,
 
-            "price": data.get("last_price", 0),
-            "close": data.get("close_price", 0),
-
-            "volume": data.get("volume", 0),
-            "value": data.get("value", 0),
-            "trade_count": data.get("trade_count", 0),
-
-            "buy_power": data.get("buy_power", 0),
-            "sell_power": data.get("sell_power", 0),
-
-            "prices": data.get("prices", []),
-
-            "source": "tsetmc",
-            "status": "ok"
-        }
-
-
-    except Exception as e:
-
-        print(
-            f"TSETMC provider error for {symbol}: {e}",
-            flush=True
-        )
-
-        return {
-            "symbol": symbol,
+            "status": "found",
 
             "price": 0,
             "close": 0,
 
             "volume": 0,
             "value": 0,
+
             "trade_count": 0,
 
             "buy_power": 0,
@@ -49,6 +85,14 @@ def get_tsetmc(symbol):
 
             "prices": [],
 
-            "source": "tsetmc",
-            "status": "error"
+            "raw": raw[:100]
+
         }
+
+
+
+def get_tsetmc(symbol):
+
+    provider = TsetmcProvider()
+
+    return provider.get_market_data(symbol)
