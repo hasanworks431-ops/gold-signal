@@ -1,12 +1,6 @@
 from flask import Flask
 
-from scheduler import start_scheduler
-from data_api import get_market_data
-from signal_engine import analyze_all_funds
-from telegram_bot import send_message
-
 import asyncio
-
 
 
 app = Flask(__name__)
@@ -22,7 +16,13 @@ def run_signal():
 
     try:
 
+        from data_api import get_market_data
+        from signal_engine import analyze_all_funds
+        from telegram_bot import send_message
+
+
         data = get_market_data()
+
 
         print(
             "MARKET DATA RECEIVED",
@@ -31,6 +31,7 @@ def run_signal():
 
 
         message = analyze_all_funds(data)
+
 
         print(
             "ANALYSIS COMPLETED",
@@ -58,18 +59,24 @@ def run_signal():
 
 
 
-# شروع Scheduler
+# تلاش برای فعال کردن Scheduler
 
-start_scheduler(
-    run_signal
-)
+try:
+
+    from scheduler import start_scheduler
 
 
+    start_scheduler(
+        run_signal
+    )
 
-# اجرای تستی فقط هنگام بالا آمدن برنامه
-# بعد از اطمینان حذف می‌شود
 
-run_signal()
+except Exception as e:
+
+    print(
+        f"Scheduler error: {e}",
+        flush=True
+    )
 
 
 
