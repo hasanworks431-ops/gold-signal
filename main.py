@@ -14,6 +14,7 @@ def run_signal():
         flush=True
     )
 
+
     try:
 
         from data_api import get_market_data
@@ -30,7 +31,9 @@ def run_signal():
         )
 
 
-        message = analyze_all_funds(data)
+        message = analyze_all_funds(
+            data
+        )
 
 
         print(
@@ -40,12 +43,14 @@ def run_signal():
 
 
         asyncio.run(
-            send_message(message)
+            send_message(
+                message
+            )
         )
 
 
         print(
-            "Signal sent successfully",
+            "SIGNAL SENT SUCCESSFULLY",
             flush=True
         )
 
@@ -53,13 +58,15 @@ def run_signal():
     except Exception as e:
 
         print(
-            f"Signal error: {e}",
+            f"RUN SIGNAL ERROR: {e}",
             flush=True
         )
 
 
 
-# تلاش برای فعال کردن Scheduler
+# -------------------------
+# Scheduler
+# -------------------------
 
 try:
 
@@ -74,11 +81,39 @@ try:
 except Exception as e:
 
     print(
-        f"Scheduler error: {e}",
+        f"SCHEDULER ERROR: {e}",
         flush=True
     )
 
 
+
+# -------------------------
+# Test Run
+# -------------------------
+
+try:
+
+    print(
+        "RUNNING TEST SIGNAL",
+        flush=True
+    )
+
+
+    run_signal()
+
+
+except Exception as e:
+
+    print(
+        f"TEST SIGNAL ERROR: {e}",
+        flush=True
+    )
+
+
+
+# -------------------------
+# Flask
+# -------------------------
 
 @app.route("/")
 def home():
