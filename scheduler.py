@@ -8,14 +8,10 @@ scheduler = BackgroundScheduler(
 
 def start_scheduler(job):
 
-    if scheduler.running:
-
-        print(
-            "Scheduler already running",
-            flush=True
-        )
-
-        return
+    print(
+        "STARTING SCHEDULER",
+        flush=True
+    )
 
 
     scheduler.add_job(
@@ -29,27 +25,10 @@ def start_scheduler(job):
     )
 
 
-    scheduler.add_job(
-        job,
-        trigger="cron",
-        day_of_week="sat,sun,mon,tue,wed",
-        hour=17,
-        minute=0,
-        id="final_signal",
-        replace_existing=True
-    )
-
-
-    print(
-        "Scheduler jobs added",
-        flush=True
-    )
-
-
     scheduler.start()
 
 
     print(
-        "Scheduler started",
+        "SCHEDULER STARTED",
         flush=True
     )
