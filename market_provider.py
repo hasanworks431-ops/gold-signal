@@ -59,127 +59,43 @@ def get_market_snapshot(symbol):
     )
 
 
-    print(
-        f"DATA READY FOR {symbol}",
-        flush=True
-    )
-
-
-
     snapshot = {
 
         "symbol": symbol,
 
 
-        # بازار TSETMC
+        "price": tsetmc.get("price"),
+        "close": tsetmc.get("close"),
 
-        "price": tsetmc.get(
-            "price",
-            0
-        ),
+        "volume": tsetmc.get("volume"),
+        "value": tsetmc.get("value"),
 
-        "close": tsetmc.get(
-            "close",
-            0
-        ),
+        "trade_count": tsetmc.get("trade_count"),
 
-        "volume": tsetmc.get(
-            "volume",
-            0
-        ),
+        "buy_power": tsetmc.get("buy_power"),
+        "sell_power": tsetmc.get("sell_power"),
 
-        "value": tsetmc.get(
-            "value",
-            0
-        ),
-
-        "trade_count": tsetmc.get(
-            "trade_count",
-            0
-        ),
+        "prices": tsetmc.get("prices"),
 
 
-        "buy_power": tsetmc.get(
-            "buy_power",
-            0
-        ),
-
-        "sell_power": tsetmc.get(
-            "sell_power",
-            0
-        ),
+        "nav": fipiran.get("nav"),
+        "bubble": fipiran.get("bubble"),
+        "aum": fipiran.get("aum"),
 
 
-        "prices": tsetmc.get(
-            "prices",
-            []
-        ),
+        "gold": tgju.get("gold"),
+        "dollar": tgju.get("dollar"),
+        "ounce": tgju.get("ounce"),
 
 
+        "ema20": rahavard.get("ema20"),
+        "ema50": rahavard.get("ema50"),
+        "ema200": rahavard.get("ema200"),
 
-        # فیپ ایران
-
-        "nav": fipiran.get(
-            "nav",
-            0
-        ),
-
-        "bubble": fipiran.get(
-            "bubble",
-            0
-        ),
-
-        "aum": fipiran.get(
-            "aum",
-            0
-        ),
+        "rsi": rahavard.get("rsi"),
+        "macd": rahavard.get("macd"),
 
 
-
-        # TGJU
-
-        "gold": tgju.get(
-            "gold",
-            0
-        ),
-
-        "dollar": tgju.get(
-            "dollar",
-            0
-        ),
-
-
-
-        # رهاورد
-
-        "ema20": rahavard.get(
-            "ema20",
-            0
-        ),
-
-        "ema50": rahavard.get(
-            "ema50",
-            0
-        ),
-
-        "ema200": rahavard.get(
-            "ema200",
-            0
-        ),
-
-        "rsi": rahavard.get(
-            "rsi",
-            0
-        ),
-
-        "macd": rahavard.get(
-            "macd",
-            0
-        ),
-
-
-
-        # وضعیت منابع
 
         "sources": {
 
@@ -203,12 +119,29 @@ def get_market_snapshot(symbol):
                 "unknown"
             )
 
-        },
-
-
-        "status": "ok"
+        }
 
     }
+
+
+    available_sources = sum(
+        1
+        for source in snapshot["sources"].values()
+        if source not in ["error", "unknown", None]
+    )
+
+
+    if available_sources == 4:
+
+        snapshot["status"] = "complete"
+
+    elif available_sources > 0:
+
+        snapshot["status"] = "partial"
+
+    else:
+
+        snapshot["status"] = "failed"
 
 
 
