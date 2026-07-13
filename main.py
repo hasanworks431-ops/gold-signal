@@ -8,6 +8,7 @@ from telegram_bot import send_message
 import asyncio
 
 
+
 app = Flask(__name__)
 
 
@@ -23,11 +24,24 @@ def run_signal():
 
         data = get_market_data()
 
+        print(
+            "MARKET DATA RECEIVED",
+            flush=True
+        )
+
+
         message = analyze_all_funds(data)
+
+        print(
+            "ANALYSIS COMPLETED",
+            flush=True
+        )
+
 
         asyncio.run(
             send_message(message)
         )
+
 
         print(
             "Signal sent successfully",
@@ -44,11 +58,18 @@ def run_signal():
 
 
 
-# شروع Scheduler هنگام بالا آمدن Flask
+# شروع Scheduler
 
 start_scheduler(
     run_signal
 )
+
+
+
+# اجرای تستی فقط هنگام بالا آمدن برنامه
+# بعد از اطمینان حذف می‌شود
+
+run_signal()
 
 
 
