@@ -1,77 +1,77 @@
 def calculate_valuation(data):
+    """
+    محاسبه امتیاز ارزش‌گذاری صندوق
+    بر اساس:
+    - NAV
+    - Bubble
+    - AUM
+    """
 
     score = 50
     reasons = []
 
+    nav = data.get("nav")
+    bubble = data.get("bubble")
+    aum = data.get("aum")
 
-    nav = data.get("nav", 0)
+    # -----------------
+    # NAV
+    # -----------------
 
-    bubble = data.get("bubble", 0)
+    if nav is not None:
 
-    aum = data.get("aum", 0)
+        if nav > 0:
+            score += 20
+            reasons.append("NAV صندوق دریافت شده است")
 
+    else:
 
+        reasons.append("NAV در دسترس نیست")
 
-    # بررسی NAV
+    # -----------------
+    # Bubble
+    # -----------------
 
-    if nav > 0:
-
-        score += 20
-
-        reasons.append(
-            "NAV صندوق دریافت شده است"
-        )
-
-
-
-    # بررسی حباب
-
-    if bubble > 0:
-
+    if bubble is not None:
 
         if bubble < 5:
 
             score += 20
+            reasons.append("حباب صندوق پایین و مناسب است")
 
-            reasons.append(
-                "حباب در محدوده مناسب است"
-            )
+        elif bubble <= 10:
 
+            reasons.append("حباب صندوق در محدوده عادی است")
 
-        elif bubble > 10:
+        else:
 
             score -= 20
+            reasons.append("حباب صندوق بالا است")
 
-            reasons.append(
-                "حباب صندوق بالا است"
-            )
+    else:
 
+        reasons.append("اطلاعات حباب موجود نیست")
 
+    # -----------------
+    # AUM
+    # -----------------
 
-    # ارزش دارایی صندوق
+    if aum is not None:
 
-    if aum > 0:
+        if aum > 0:
 
-        score += 10
+            score += 10
+            reasons.append("ارزش دارایی صندوق مناسب است")
 
-        reasons.append(
-            "ارزش دارایی صندوق مناسب است"
-        )
+    else:
 
+        reasons.append("اطلاعات AUM موجود نیست")
 
+    # -----------------
+    # محدودسازی امتیاز
+    # -----------------
 
-    # محدود کردن امتیاز
-
-    if score > 100:
-
-        score = 100
-
-
-    if score < 0:
-
-        score = 0
-
-
+    score = max(0, min(score, 100))
 
     return {
 
