@@ -6,7 +6,6 @@ import asyncio
 app = Flask(__name__)
 
 
-
 def run_signal():
 
     print(
@@ -88,31 +87,7 @@ except Exception as e:
 
 
 # -------------------------
-# Test Run
-# -------------------------
-
-try:
-
-    print(
-        "RUNNING TEST SIGNAL",
-        flush=True
-    )
-
-
-    run_signal()
-
-
-except Exception as e:
-
-    print(
-        f"TEST SIGNAL ERROR: {e}",
-        flush=True
-    )
-
-
-
-# -------------------------
-# Flask
+# Flask Route
 # -------------------------
 
 @app.route("/")
